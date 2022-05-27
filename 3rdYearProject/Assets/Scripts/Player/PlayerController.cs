@@ -5,11 +5,14 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
   public float moveSpeed;
-
   private bool isMoving;
   private Vector2 input;
 
   private Animator animator;
+
+  public LayerMask solidObjectsLayer;
+  public LayerMask grassLayer;
+
 
   private void Awake()
   {
@@ -37,7 +40,8 @@ public class PlayerController : MonoBehaviour
         targetPos.x += input.x;
         targetPos.y += input.y;
 
-        StartCoroutine(Move(targetPos));
+        if (isWalkable(targetPos))
+          StartCoroutine(Move(targetPos));
       }
     }
 
@@ -57,5 +61,30 @@ public class PlayerController : MonoBehaviour
     transform.position = targetPos;
 
     isMoving = false;
+
+    CheckForEncounters();
+  }
+
+  // will check the targetPos and see if the tile at that position isWalkable and will assume it is otherwise
+  private bool isWalkable(Vector3 targetPos)
+  {
+    if (Physics2D.OverlapCircle(targetPos, 0.2f, solidObjectsLayer) != null)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  private void CheckForEncounters()
+  {
+    // if not null then player walked on a grass tile. If the player walks on the grass, 1/10 we will trigger a battle
+    if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer) != null)
+    {
+      if (Random.Range(1, 101) <= 10)
+      {
+        Debug.Log("Encountered a wild Pokemon");
+      }
+    }
   }
 }
