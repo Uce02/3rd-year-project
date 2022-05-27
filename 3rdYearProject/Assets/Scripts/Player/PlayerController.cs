@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
     {
       if (Random.Range(1, 101) <= 10)
       {
-        Debug.Log("Encountered a wild Pokemon");
+        Debug.Log("Encountered a wild animal");
       }
     }
   }
