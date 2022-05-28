@@ -25,8 +25,9 @@ public class AnimalBase : ScriptableObject
   [SerializeField] int spDefence;
   [SerializeField] int speed;
 
-  public string Name
-  { get { return name; }
+// which variable is to be reutned and get this to be used/displayed wherever
+  public string Name {
+    get { return name; }
   }
 
   public string Description {
