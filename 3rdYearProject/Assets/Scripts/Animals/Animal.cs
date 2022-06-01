@@ -8,12 +8,26 @@ public class Animal
   AnimalBase _base;
   int level;
 
+  public int HP { get; set; }
+
+  public List<Move> Moves { get; set; }
+
   public Animal(AnimalBase aBase, int aLevel)
   {
     _base = aBase;
     level = aLevel;
+    HP = _base.MaxHP;
 
-    // _base.Name;
+    // generate moves based on animals level
+    Moves = new List<Move>();
+    foreach (var move in _base.LearnableMoves)
+    {
+      if (move.Level <= level)
+          Moves.Add(new Move(move.Base));
+
+      if (Moves.Count >= 4)
+          break;
+    }
   }
 
   public int Attack {

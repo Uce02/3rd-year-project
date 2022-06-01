@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class AnimalBase : ScriptableObject
 {
+  // serialize all these to show them in the inspector, using get will not show them in the inspector
   [SerializeField] string aName;
 
   [TextArea]
@@ -24,6 +25,8 @@ public class AnimalBase : ScriptableObject
   [SerializeField] int spAttack;
   [SerializeField] int spDefence;
   [SerializeField] int speed;
+
+  [SerializeField] List<LearnableMove> learnableMoves;
 
 // which variable is to be reutned and get this to be used/displayed wherever
   public string Name {
@@ -74,6 +77,27 @@ public class AnimalBase : ScriptableObject
     get { return speed; }
   }
 
+  public List<LearnableMove> LearnableMoves {
+    get { return learnableMoves; }
+  }
+
+}
+
+[System.Serializable]
+
+public class LearnableMove
+{
+  // store the moves and at which level they will become available
+  [SerializeField] MoveBase moveBase;
+  [SerializeField] int level;
+
+  public MoveBase Base {
+    get { return moveBase; }
+  }
+
+  public int Level {
+    get { return level; }
+  }
 }
 
 public enum AnimalType
