@@ -5,8 +5,9 @@ using UnityEngine;
 public class Animal
 {
 
-  AnimalBase _base;
-  int level;
+  public AnimalBase Base { get; set; }
+
+  public int Level { get; set; }
 
   public int HP { get; set; }
 
@@ -14,15 +15,15 @@ public class Animal
 
   public Animal(AnimalBase aBase, int aLevel)
   {
-    _base = aBase;
-    level = aLevel;
-    HP = _base.MaxHP;
+    Base = aBase;
+    Level = aLevel;
+    HP = MaxHP;
 
     // generate moves based on animals level
     Moves = new List<Move>();
-    foreach (var move in _base.LearnableMoves)
+    foreach (var move in Base.LearnableMoves)
     {
-      if (move.Level <= level)
+      if (move.Level <= Level)
           Moves.Add(new Move(move.Base));
 
       if (Moves.Count >= 4)
@@ -32,27 +33,27 @@ public class Animal
 
   public int Attack {
     // calculate attack for each level by multiplying base stat with the level as a % + 5. FloorToInt to remove decimal
-    get { return Mathf.FloorToInt((_base.Attack * level) / 100f) + 5; }
+    get { return Mathf.FloorToInt((Base.Attack * Level) / 100f) + 5; }
   }
 
   public int Defence {
-    get { return Mathf.FloorToInt((_base.Defence * level) / 100f) + 5; }
+    get { return Mathf.FloorToInt((Base.Defence * Level) / 100f) + 5; }
   }
 
   public int SpAttack {
-    get { return Mathf.FloorToInt((_base.SpAttack * level) / 100f) + 5; }
+    get { return Mathf.FloorToInt((Base.SpAttack * Level) / 100f) + 5; }
   }
 
   public int SpDefence {
-    get { return Mathf.FloorToInt((_base.SpDefence * level) / 100f) + 5; }
+    get { return Mathf.FloorToInt((Base.SpDefence * Level) / 100f) + 5; }
   }
 
   public int Speed {
-    get { return Mathf.FloorToInt((_base.Speed * level) / 100f) + 5; }
+    get { return Mathf.FloorToInt((Base.Speed * Level) / 100f) + 5; }
   }
 
   public int MaxHP {
-    get { return Mathf.FloorToInt((_base.MaxHP * level) / 100f) + 10; }
+    get { return Mathf.FloorToInt((Base.MaxHP * Level) / 100f) + 10; }
   }
 
 
