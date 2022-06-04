@@ -56,5 +56,31 @@ public class Animal
     get { return Mathf.FloorToInt((Base.MaxHP * Level) / 100f) + 10; }
   }
 
+  public bool TakeDamage(Move move, Animal attacker)
+  {
+    // calculates damage
+    float modifiers = Random.Range(0.85f, 1f);
+    float a = (2 * attacker.Level + 10) / 250f;
+    float d = a * move.Base.Power * ((float)attacker.Attack / Defence) + 2;
+    int damage = Mathf.FloorToInt(d * modifiers);
+
+    // reduce the damange from HP
+    HP -= damage;
+    if (HP <= 0)
+    {
+      // animal fainted
+      HP = 0;
+      return true;
+    }
+
+    return false;
+  }
+
+  public Move GetRandomMove()
+  {
+    // generate random number from 0 to the length of the animal moves and return move at that index
+    int r = Random.Range(0, Moves.Count);
+    return Moves[r];
+  }
 
 }

@@ -10,10 +10,19 @@ public class BattleHUD : MonoBehaviour
   [SerializeField] Text levelText;
   [SerializeField] HPBar hpBar;
 
+  Animal _animal;
+
   public void SetData(Animal animal)
   {
+    _animal = animal;
+
     nameText.text = animal.Base.Name;
     levelText.text = "Lvl " + animal.Level;
     hpBar.SetHP((float) animal.HP / animal.MaxHP);
+  }
+
+  public IEnumerator UpdateHP()
+  {
+    yield return hpBar.SetHPSmooth((float) _animal.HP / _animal.MaxHP);
   }
 }

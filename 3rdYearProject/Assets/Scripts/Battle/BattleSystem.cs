@@ -58,6 +58,58 @@ public class BattleSystem : MonoBehaviour
     // only show move selector, disable any other text from showing up in the dialogue box
   }
 
+  IEnumerator PerformPlayerMove()
+  {
+    // so player can't change move once selected
+    state = BattleState.Busy;
+
+    // player animal will perform attack and enemy will take damage
+    // reference to the move selectedMove
+    var move = playerUnit.Animal.Moves[currentMove];
+    yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} used {move.Base.Name}");
+
+    yield return new WaitForSeconds(1f);
+
+    bool isFainted = enemyUnit.Animal.TakeDamage(move, playerUnit.Animal);
+    yield return enemyHUD.UpdateHP();
+
+    if (isFainted)
+    {
+      // if above bool is true then enemy fainted
+      yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} fainted");
+    }
+    else
+    {
+      StartCoroutine(EnemyMove());
+    }
+  }
+
+  IEnumerator EnemyMove()
+  {
+    state = BattleState.EnemyMove;
+
+    // select random move from enemy move class
+    var move = enemyUnit.Animal.GetRandomMove();
+
+    yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} used {move.Base.Name}");
+
+    yield return new WaitForSeconds(1f);
+
+    bool isFainted = playerUnit.Animal.TakeDamage(move, playerUnit.Animal);
+    yield return playerHUD.UpdateHP();
+
+    if (isFainted)
+    {
+      // if above bool is true then enemy fainted
+      yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} fainted");
+    }
+    else
+    {
+      // if no one has died let the player choose another move
+      PlayerAction();
+    }
+  }
+
   private void Update()
   {
     if (state == BattleState.PlayerAction)
@@ -129,5 +181,13 @@ public class BattleSystem : MonoBehaviour
     }
 
     dialogueBox.UpdateMoveSelection(currentMove, playerUnit.Animal.Moves[currentMove]);
+
+    // perform the move when pressed
+    if (Input.GetKeyDown(KeyCode.Z))
+    {
+      dialogueBox.EnableMoveSelector(false);
+      dialogueBox.EnableDialougeText(true);
+      StartCoroutine(PerformPlayerMove());
+    }
   }
 }

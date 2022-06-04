@@ -944,6 +944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterPerSecond: 30
+  highlightedColour: {r: 0.24096651, g: 0.47197998, b: 0.8962264, a: 1}
   dialogueText: {fileID: 1060258811}
   actionSelector: {fileID: 2013048175}
   moveSelector: {fileID: 931301960}
