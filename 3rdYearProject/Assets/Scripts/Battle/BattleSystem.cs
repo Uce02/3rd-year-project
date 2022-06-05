@@ -67,6 +67,10 @@ public class BattleSystem : MonoBehaviour
     var move = playerUnit.Animal.Moves[currentMove];
     yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} used {move.Base.Name}");
 
+    playerUnit.PlayAttackAnimation();
+    yield return new WaitForSeconds(1f);
+
+    enemyUnit.PlayHitAnimation();
     var damageDetails = enemyUnit.Animal.TakeDamage(move, playerUnit.Animal);
     yield return enemyHUD.UpdateHP();
     yield return ShowDamageDetails(damageDetails);
@@ -75,6 +79,7 @@ public class BattleSystem : MonoBehaviour
     {
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} fainted");
+      enemyUnit.PlayFaintAnimation();
     }
     else
     {
@@ -88,9 +93,12 @@ public class BattleSystem : MonoBehaviour
 
     // select random move from enemy move class
     var move = enemyUnit.Animal.GetRandomMove();
-
     yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} used {move.Base.Name}");
 
+    enemyUnit.PlayAttackAnimation();
+    yield return new WaitForSeconds(1f);
+
+    playerUnit.PlayHitAnimation();
     var damageDetails = playerUnit.Animal.TakeDamage(move, playerUnit.Animal);
     yield return playerHUD.UpdateHP();
     yield return ShowDamageDetails(damageDetails);
@@ -99,6 +107,7 @@ public class BattleSystem : MonoBehaviour
     {
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} fainted");
+      playerUnit.PlayFaintAnimation();
     }
     else
     {
