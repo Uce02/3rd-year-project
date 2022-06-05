@@ -56,10 +56,24 @@ public class Animal
     get { return Mathf.FloorToInt((Base.MaxHP * Level) / 100f) + 10; }
   }
 
-  public bool TakeDamage(Move move, Animal attacker)
+  public DamageDetails TakeDamage(Move move, Animal attacker)
   {
-    // calculates damage
-    float modifiers = Random.Range(0.85f, 1f);
+    // critical hit is of 6.25% chance and deals double damange
+    float critical = 1f;
+    if (Random.value * 100f <= 6.25f)
+        critical = 2f;
+
+    float type = TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type1) * TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type2);
+
+    var damageDetails = new DamageDetails()
+    {
+      Type = type,
+      Critical = critical,
+      Fainted = false
+    };
+    
+    // calculates damage including any changes due to type from GetEffectiveness fucntion in animal base
+    float modifiers = Random.Range(0.85f, 1f) * type * critical;
     float a = (2 * attacker.Level + 10) / 250f;
     float d = a * move.Base.Power * ((float)attacker.Attack / Defence) + 2;
     int damage = Mathf.FloorToInt(d * modifiers);
@@ -70,10 +84,10 @@ public class Animal
     {
       // animal fainted
       HP = 0;
-      return true;
+      damageDetails.Fainted = true;
     }
 
-    return false;
+    return damageDetails;
   }
 
   public Move GetRandomMove()
@@ -82,5 +96,13 @@ public class Animal
     int r = Random.Range(0, Moves.Count);
     return Moves[r];
   }
+}
 
+public class DamageDetails
+{
+  public bool Fainted { get; set; }
+
+  public float Critical { get; set; }
+
+  public float Type { get; set; }
 }

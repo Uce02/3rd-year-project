@@ -34,6 +34,8 @@ public class BattleDialogueBox : MonoBehaviour
       // wait for 1/30th of a second after displaying each letter (30 letters in one second)
       yield return new WaitForSeconds(1f/letterPerSecond);
     }
+    // anywhere a dialogue is shown it waits one second after displaying it to be read
+    yield return new WaitForSeconds(1f);
   }
 
   public void EnableDialougeText(bool enabled)

@@ -37,7 +37,6 @@ public class BattleSystem : MonoBehaviour
     dialogueBox.SetMoveNames(playerUnit.Animal.Moves);
 
     yield return dialogueBox.TypeDialogue($"A wild {enemyUnit.Animal.Base.Name} appeared!");
-    yield return new WaitForSeconds(1f);
 
     PlayerAction();
   }
@@ -68,12 +67,11 @@ public class BattleSystem : MonoBehaviour
     var move = playerUnit.Animal.Moves[currentMove];
     yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} used {move.Base.Name}");
 
-    yield return new WaitForSeconds(1f);
-
-    bool isFainted = enemyUnit.Animal.TakeDamage(move, playerUnit.Animal);
+    var damageDetails = enemyUnit.Animal.TakeDamage(move, playerUnit.Animal);
     yield return enemyHUD.UpdateHP();
+    yield return ShowDamageDetails(damageDetails);
 
-    if (isFainted)
+    if (damageDetails.Fainted)
     {
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} fainted");
@@ -93,12 +91,11 @@ public class BattleSystem : MonoBehaviour
 
     yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} used {move.Base.Name}");
 
-    yield return new WaitForSeconds(1f);
-
-    bool isFainted = playerUnit.Animal.TakeDamage(move, playerUnit.Animal);
+    var damageDetails = playerUnit.Animal.TakeDamage(move, playerUnit.Animal);
     yield return playerHUD.UpdateHP();
+    yield return ShowDamageDetails(damageDetails);
 
-    if (isFainted)
+    if (damageDetails.Fainted)
     {
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} fainted");
@@ -108,6 +105,18 @@ public class BattleSystem : MonoBehaviour
       // if no one has died let the player choose another move
       PlayerAction();
     }
+  }
+
+  IEnumerator ShowDamageDetails(DamageDetails damageDetails)
+  {
+    if (damageDetails.Critical > 1f)
+        yield return dialogueBox.TypeDialogue("A critical hit!");
+
+    if (damageDetails.Type > 1f)
+        yield return dialogueBox.TypeDialogue("It's super effective!");
+    else if (damageDetails.Type < 1f)
+        yield return dialogueBox.TypeDialogue("It's not very effective!");
+
   }
 
   private void Update()

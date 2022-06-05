@@ -115,7 +115,36 @@ public enum AnimalType
   Flying,
   Bug,
   Rock
-
   // excluded psychic, ghost and dragon
+}
 
+public class TypeChart
+{
+  // 2D array to store weaknesses of each animal type. static so can use directly from the class without creating an object
+  static float[][] chart =
+  {
+    //                    NOR FIR WAT  ELE  GRA  ICE FIG POI
+    /*NOR*/ new float[] { 1f, 1f, 1f,  1f,  1f,  1f, 1f, 1f },
+    /*FIR*/ new float[] { 1f,0.5f,0.5f,1f,  2f,  2f, 1f, 1f },
+    /*WAT*/ new float[] { 1f, 2f, 0.5f,1f,  0.5f,1f, 1f, 1f },
+    /*ELE*/ new float[] { 1f, 1f, 2f,  0.5f,0.5f,1f, 1f, 1f },
+    /*GRA*/ new float[] { 1f,0.5f,2f,  1f,  0.5f,1f, 1f, 0.5f },
+    /*ICE*/ new float[] { 1f,0.5f,0.5f,1f,  2f, 0.5f,1f, 1f },
+    /*FIG*/ new float[] { 2f, 1f, 1f,  1f,  1f,  2f, 1f, 0.5f },
+    /*POI*/ new float[] { 1f, 1f, 1f,  1f,  2f,  1f, 1f, 0.5f}
+  };
+
+  public static float GetEffectiveness(AnimalType attackType, AnimalType defenceType)
+  {
+    if (attackType == AnimalType.None || defenceType == AnimalType.None)
+        return 1;
+
+    // -1 from integer value of each enum type to make it equal the chart
+    // chart starts at index value 0 and enums start at 1
+    int row = (int)attackType - 1;
+    int col = (int)defenceType - 1;
+
+    return chart[row][col];
+
+  }
 }
