@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,12 +16,15 @@ public class BattleSystem : MonoBehaviour
   [SerializeField] BattleHUD enemyHUD;
   [SerializeField] BattleDialogueBox dialogueBox;
 
+  // bool to let GameController know whether player won or lost battle
+  public event Action<bool> OnBattleOver;
+
   BattleState state;
   // variables to store current action and current move
   int currentAction;
   int currentMove;
 
-  private void Start()
+  public void StartBattle()
   {
     StartCoroutine(SetupBattle());
   }
@@ -80,6 +84,9 @@ public class BattleSystem : MonoBehaviour
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} fainted");
       enemyUnit.PlayFaintAnimation();
+      // if enemy faints wait 2 secs and pass true to OnBattleOver as enemy fainted and player won
+      yield return new WaitForSeconds(2f);
+      OnBattleOver(true);
     }
     else
     {
@@ -108,6 +115,9 @@ public class BattleSystem : MonoBehaviour
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} fainted");
       playerUnit.PlayFaintAnimation();
+      // pass false to OnBattleOver to indicate player lost
+      yield return new WaitForSeconds(2f);
+      OnBattleOver(true);
     }
     else
     {
@@ -128,7 +138,7 @@ public class BattleSystem : MonoBehaviour
 
   }
 
-  private void Update()
+  public void HandleUpdate()
   {
     if (state == BattleState.PlayerAction)
     {

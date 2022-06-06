@@ -32,6 +32,7 @@ public class BattleUnit : MonoBehaviour
     else
         image.sprite = Animal.Base.FrontSprite;
 
+    image.color = ogCol;
     PlayEnterAnimation();
   }
 
@@ -74,6 +75,6 @@ public class BattleUnit : MonoBehaviour
     // Join() to perform both animations at the same time (fade and move down)
     var sequence = DOTween.Sequence();
     sequence.Append(image.transform.DOLocalMoveY(ogPos.y - 150f, 0.5f));
-    sequence.Join(image.DOFade(0f, 0.4f));
+    sequence.Join(image.DOFade(0f, 0.5f));
   }
 }
