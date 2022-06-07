@@ -24,16 +24,21 @@ public class BattleSystem : MonoBehaviour
   int currentAction;
   int currentMove;
 
-  public void StartBattle()
+  AnimalParty playerParty;
+  Animal wildAnimal;
+
+  public void StartBattle(AnimalParty playerParty, Animal wildAnimal)
   {
+    // pass player party and wild animal while calling the StartBattle function
+    this.playerParty = playerParty;
+    this.wildAnimal = wildAnimal;
     StartCoroutine(SetupBattle());
   }
 
   public IEnumerator SetupBattle()
   {
-    //calls on playerUnit from BattleUnit to show the animal
-    playerUnit.Setup();
-    enemyUnit.Setup();
+    playerUnit.Setup(playerParty.GetHealthyAnimal());
+    enemyUnit.Setup(wildAnimal);
     //set the HUD data of the animal called in the previous line from BattleUnit
     playerHUD.SetData(playerUnit.Animal);
     enemyHUD.SetData(enemyUnit.Animal);
@@ -117,9 +122,30 @@ public class BattleSystem : MonoBehaviour
       // if above bool is true then enemy fainted
       yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} fainted");
       playerUnit.PlayFaintAnimation();
+
       // pass false to OnBattleOver to indicate player lost
       yield return new WaitForSeconds(2f);
-      OnBattleOver(true);
+
+      // before ending the battle check if there is another healthy animal to send out
+      // if there is SetupBattle
+      var nextAnimal = playerParty.GetHealthyAnimal();
+      if (nextAnimal != null)
+      {
+        playerUnit.Setup(nextAnimal);
+        //set the HUD data of the animal called in the previous line from BattleUnit
+        playerHUD.SetData(nextAnimal);
+        // passing moves of current animal to the SetMoveNames function
+        dialogueBox.SetMoveNames(nextAnimal.Moves);
+
+        yield return dialogueBox.TypeDialogue($"Go {nextAnimal.Base.Name}!");
+
+        PlayerAction();
+      }
+      else
+      {
+        // if there is no more helathy animals to send out, then the player lost the battle
+        OnBattleOver(false);
+      }
     }
     else
     {

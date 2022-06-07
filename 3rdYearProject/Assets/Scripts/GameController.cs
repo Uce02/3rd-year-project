@@ -32,7 +32,12 @@ public class GameController : MonoBehaviour
     battleSystem.gameObject.SetActive(true);
     worldCamera.gameObject.SetActive(false);
 
-    battleSystem.StartBattle();
+    // can get playerParty from playerController as both are components of Player gameObject
+    var playerParty = playerController.GetComponent<AnimalParty>();
+    // to get wildAnimal need a reference to the MapArea to call its script
+    var wildAnimal = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomWildAnimal();
+
+    battleSystem.StartBattle(playerParty, wildAnimal);
   }
 
   void EndBattle(bool won)

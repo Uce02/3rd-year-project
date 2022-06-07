@@ -1,22 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//classes will only be shown in the inspector if we use this attbiute
+[System.Serializable]
 
 public class Animal
 {
+  // to make them show up in the inspector they need to be SerializeField
+  [SerializeField] AnimalBase _base;
+  [SerializeField] int level;
 
-  public AnimalBase Base { get; set; }
+  public AnimalBase Base {
+    get { return _base; }
+  }
 
-  public int Level { get; set; }
+  public int Level {
+    get { return level; }
+  }
 
   public int HP { get; set; }
 
   public List<Move> Moves { get; set; }
 
-  public Animal(AnimalBase aBase, int aLevel)
+  // constructor won't be called as we're making objects of the animal class in the inspector
+  // so use init to add all initialisation code
+  public void Init()
   {
-    Base = aBase;
-    Level = aLevel;
     HP = MaxHP;
 
     // generate moves based on animals level
