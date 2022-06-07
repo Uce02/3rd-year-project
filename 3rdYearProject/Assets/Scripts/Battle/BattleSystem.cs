@@ -69,6 +69,7 @@ public class BattleSystem : MonoBehaviour
     // player animal will perform attack and enemy will take damage
     // reference to the move selectedMove
     var move = playerUnit.Animal.Moves[currentMove];
+    move.PP--;
     yield return dialogueBox.TypeDialogue($"{playerUnit.Animal.Base.Name} used {move.Base.Name}");
 
     playerUnit.PlayAttackAnimation();
@@ -100,6 +101,7 @@ public class BattleSystem : MonoBehaviour
 
     // select random move from enemy move class
     var move = enemyUnit.Animal.GetRandomMove();
+    move.PP--;
     yield return dialogueBox.TypeDialogue($"{enemyUnit.Animal.Base.Name} used {move.Base.Name}");
 
     enemyUnit.PlayAttackAnimation();

@@ -71,11 +71,16 @@ public class Animal
       Critical = critical,
       Fainted = false
     };
-    
+
+    // if the move is special, use spAttack and spDefence values
+    // '?' shorthand version of writing if else
+    float attack = (move.Base.isSpecial) ? attacker.SpAttack : attacker.Attack;
+    float defence = (move.Base.isSpecial) ? SpDefence : Defence;
+
     // calculates damage including any changes due to type from GetEffectiveness fucntion in animal base
     float modifiers = Random.Range(0.85f, 1f) * type * critical;
     float a = (2 * attacker.Level + 10) / 250f;
-    float d = a * move.Base.Power * ((float)attacker.Attack / Defence) + 2;
+    float d = a * move.Base.Power * ((float)attack / defence) + 2;
     int damage = Mathf.FloorToInt(d * modifiers);
 
     // reduce the damange from HP

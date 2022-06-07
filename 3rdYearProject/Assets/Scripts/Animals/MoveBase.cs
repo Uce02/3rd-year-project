@@ -41,4 +41,19 @@ public class MoveBase : ScriptableObject
   public int PP {
     get { return pp; }
   }
+
+  public bool isSpecial {
+    get {
+      // if the type of the move is any of the below, return true
+      if (type == AnimalType.Fire || type == AnimalType.Water || type == AnimalType.Grass
+      || type == AnimalType.Ice || type == AnimalType.Electric)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+  }
+}
 }
