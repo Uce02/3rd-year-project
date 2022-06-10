@@ -7,6 +7,10 @@ public class AnimalParty : MonoBehaviour
 {
   [SerializeField] List<Animal> animals;
 
+  public List<Animal> Animals {
+    get { return animals; }
+  }
+
   private void Start()
   {
     // loop through all animals and initialise each one

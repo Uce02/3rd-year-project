@@ -15,6 +15,7 @@ public class BattleSystem : MonoBehaviour
   [SerializeField] BattleHUD playerHUD;
   [SerializeField] BattleHUD enemyHUD;
   [SerializeField] BattleDialogueBox dialogueBox;
+  [SerializeField] PartyScreen partyScreen;
 
   // bool to let GameController know whether player won or lost battle
   public event Action<bool> OnBattleOver;
@@ -42,6 +43,9 @@ public class BattleSystem : MonoBehaviour
     //set the HUD data of the animal called in the previous line from BattleUnit
     playerHUD.SetData(playerUnit.Animal);
     enemyHUD.SetData(enemyUnit.Animal);
+
+    partyScreen.Init();
+
     // passing moves of current animal to the SetMoveNames function
     dialogueBox.SetMoveNames(playerUnit.Animal.Moves);
 
@@ -53,8 +57,15 @@ public class BattleSystem : MonoBehaviour
   void PlayerAction()
   {
     state = BattleState.PlayerAction;
-    StartCoroutine(dialogueBox.TypeDialogue("Choose an action"));
+    // when going back to PlayerAction from move selection don't animate the text every time, just display it
+    dialogueBox.SetDialogue("Choose an action");
     dialogueBox.EnableActionSelector(true);
+  }
+
+  void OpenPartyScreen()
+  {
+    partyScreen.SetPartyData(playerParty.Animals);
+    partyScreen.gameObject.SetActive(true);
   }
 
   void PlayerMove()
@@ -179,18 +190,23 @@ public class BattleSystem : MonoBehaviour
   }
 
   void HandleActionSelection()
+  // now have 4 options so need to use all 4 arrow keys to allow for selection like HandleMoveSelection
+  // clamp specifies how many variables there are to select and so works out whether you can move down
+  // if you're already on the bottom row, for example, which you can't so only allows left, right, or up
+  // depending on the situation as opposed to the hardcoded version for this I had in the HandleMoveSelection
+  // function below.
   {
-    if (Input.GetKeyDown(KeyCode.DownArrow))
-    {
-      // if on 0 (fight) and you press down, you're now on 1 and vice versa
-      if (currentAction < 1)
-          ++currentAction;
-    }
+    if (Input.GetKeyDown(KeyCode.RightArrow))
+        ++currentAction;
+    else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        --currentAction;
+    else if (Input.GetKeyDown(KeyCode.DownArrow))
+        currentAction += 2;
     else if (Input.GetKeyDown(KeyCode.UpArrow))
-    {
-      if (currentAction > 0)
-          --currentAction;
-    }
+        currentAction -= 2;
+
+    currentAction = Mathf.Clamp(currentAction, 0, 3);
+
 
     dialogueBox.UpdateActionSelection(currentAction);
 
@@ -203,6 +219,15 @@ public class BattleSystem : MonoBehaviour
       }
       else if (currentAction == 1)
       {
+        // Bag
+      }
+      else if (currentAction == 2)
+      {
+        // Animal
+        OpenPartyScreen();
+      }
+      else if (currentAction == 3)
+      {
         // Run
       }
     }
@@ -210,31 +235,16 @@ public class BattleSystem : MonoBehaviour
 
   void HandleMoveSelection()
   {
-    // update current move based on user input, like above HandleActionSelection function
     if (Input.GetKeyDown(KeyCode.RightArrow))
-    {
-      // one to the right is move 1
-      if (currentMove < playerUnit.Animal.Moves.Count - 1)
-          ++currentMove;
-    }
+        ++currentMove;
     else if (Input.GetKeyDown(KeyCode.LeftArrow))
-    {
-      // first move is move 0
-      if (currentMove > 0)
-          --currentMove;
-    }
+        --currentMove;
     else if (Input.GetKeyDown(KeyCode.DownArrow))
-    {
-      // first down and left is move 3
-      if (currentMove < playerUnit.Animal.Moves.Count -2)
-          currentMove += 2;
-    }
+        currentMove += 2;
     else if (Input.GetKeyDown(KeyCode.UpArrow))
-    {
-      // down and to the right is move 4
-      if (currentMove > 1)
-          currentMove -= 2;
-    }
+        currentMove -= 2;
+
+    currentMove = Mathf.Clamp(currentMove, 0, playerUnit.Animal.Moves.Count - 1);
 
     dialogueBox.UpdateMoveSelection(currentMove, playerUnit.Animal.Moves[currentMove]);
 
@@ -244,6 +254,14 @@ public class BattleSystem : MonoBehaviour
       dialogueBox.EnableMoveSelector(false);
       dialogueBox.EnableDialougeText(true);
       StartCoroutine(PerformPlayerMove());
+    }
+
+    // exit move selection and go back to aciton selection by pressing x
+    else if (Input.GetKeyDown(KeyCode.X))
+    {
+      dialogueBox.EnableMoveSelector(false);
+      dialogueBox.EnableDialougeText(true);
+      PlayerAction();
     }
   }
 }
